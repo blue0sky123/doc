@@ -1,0 +1,5 @@
+JDK原生的URLConnection
+Apache的Http Client
+Netty的异步HTTP Client
+Spring的RestTemplate
+Feign
