@@ -18,10 +18,16 @@ Qos=Quality of Service，qos是Dubbo的在线运维命令，可以对服务进�
 </dependency>
 ....
 
-check
+启动时检查
 +
 ....
 <dubbo:reference interface="com.foo.BarService" check="false" />
 <dubbo:consumer check="false" />
 <dubbo:registry check="false" />
+....
+集群容错
++
+....
+<dubbo:service cluster="failsafe" />
+<dubbo:reference cluster="failsafe" />
 ....
