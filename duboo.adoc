@@ -1,4 +1,5 @@
 Qos=Quality of Service，qos是Dubbo的在线运维命令，可以对服务进行动态的配置、控制及查询，Dubboo2.5.8新版本重构了telnet（telnet是从Dubbo2.0.5开始支持的）模块，提供了新的telnet命令支持，新版本的telnet端口与dubbo协议的端口是不同的端口，默认为22222，可以通过配置文件dubbo.properties修改。telnet 模块现在同时支持 http 协议和 telnet 协议，方便各种情况的使用
++
 ....
 <dubbo:application name="demo-provider">
     <dubbo:parameter key="qos.enable" value="true"/>
@@ -8,10 +9,19 @@ Qos=Quality of Service，qos是Dubbo的在线运维命令，可以对服务进�
 ....
 
 要使用Telnet命令的话，我们的provider或者consumer工程的pom文件中要添加commons-lang3的依赖，否则会无法使用并且控制台会报 如下异常
++
 ....
 <dependency>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-lang3</artifactId>
     <version>3.4</version>
 </dependency>
+....
+
+check
++
+....
+<dubbo:reference interface="com.foo.BarService" check="false" />
+<dubbo:consumer check="false" />
+<dubbo:registry check="false" />
 ....
