@@ -35,7 +35,13 @@ java执行jar缺少依赖jar包
 
 java -cp hazelcast-test-1.0-SNAPSHOT.jar hazelcast.GettingStarted会返回 
 ....
-Exception in thread "main" java.lang.NoClassDefFoundError: com/hazelcast/config/Config at hazelcast.GettingStarted.main(GettingStarted.java:12) Caused by: java.lang.ClassNotFoundException: com.hazelcast.config.Config at java.net.URLClassLoader.findClass(Unknown Source) at java.lang.ClassLoader.loadClass(Unknown Source) at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source) at java.lang.ClassLoader.loadClass(Unknown Source)
+Exception in thread "main" java.lang.NoClassDefFoundError: com/hazelcast/config/Config
+        at hazelcast.GettingStarted.main(GettingStarted.java:12)
+Caused by: java.lang.ClassNotFoundException: com.hazelcast.config.Config
+        at java.net.URLClassLoader.findClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
 ....
 解决方法：
 
