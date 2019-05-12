@@ -1,0 +1,5 @@
+使用servlet作为控制器
+@WebServlet(name="", urlPatterns={"", ""})
+
+使用filter作为控制器
+@WebFilter(filterName="", urlPatterns={""})
