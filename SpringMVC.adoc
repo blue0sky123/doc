@@ -1,5 +1,29 @@
 使用servlet作为控制器
+....
 @WebServlet(name="", urlPatterns={"", ""})
+public class xxx extends HttpServlet{
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RequestDispatcher rd = req.getRequestDispatcher("xxx");
+        rd.forward(req, resp);
+        or
+        resp.sendRedirect("http://www.baidu.com");
+    }
+}
+....
 
 使用filter作为控制器
+....
 @WebFilter(filterName="", urlPatterns={""})
+public class xxx extends Filter{
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException{
+    }
+    @Override
+    public void destroy(FilterConfig filterConfig) throws ServletException{
+    }
+    @Override
+    public void doFilter(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    }
+}
+....

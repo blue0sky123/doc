@@ -1,0 +1,31 @@
+在settings.xml中设置这个mirror，下载插件和依赖更快
+....
+<mirror>
+    <id>alimaven</id>
+    <name>aliyun maven</name>
+    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+	<mirrorOf>central</mirrorOf>
+</mirror>
+....
+
+插件可以拷贝依赖包到lib目录
+....
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <executions>
+		<execution>
+			<id>copy-dependencies</id>
+			<phase>package</phase>
+            <goals>
+				<goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+				<outputDirectory>target/lib</outputDirectory>
+                <excludeTransitive>false</excludeTransitive>
+                <stripVersion>true</stripVersion>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+....
