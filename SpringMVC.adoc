@@ -1,3 +1,4 @@
+=== 不使用XML
 使用servlet作为控制器
 ....
 @WebServlet(name="", urlPatterns={"", ""})
@@ -26,4 +27,29 @@ public class xxx extends Filter{
     public void doFilter(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 }
+....
+继承自Controller
+....
+public class xxxController implements Controller{
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest req, HttpServletResponse resp) throws Exception{
+        return new ModelAndView("");
+    }
+}
+....
+
+=== 使用XML配置
+==== 配置web.xml
+
+==== 配置xxx-servlet.xml
+....
+<bean name="/input-product" class="com.chinaums.open.controller.ServletCOntroller" />
+....
+=== 视图解析
+==== 配置xxx-servlet.xml
+....
+<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/jsp" />
+    <property name="suffix" value=".jsp" />
+</bean>
 ....
