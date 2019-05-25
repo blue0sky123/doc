@@ -60,6 +60,8 @@ public class xxxController implements Controller{
 @RequestMapping(value="", method={,})
 
 == 可以在请求处理方法中出现的参数类型
++
+....
 javax.servlet.ServletRequest或javax.servlet.http.HttpServletRequest
 javax.servlet.ServletResponse或javax.servlet.http.HttpServletResponse
 javax.servlet.http.HttpSession
@@ -69,7 +71,7 @@ java.io.InputStream或java.io.Reader
 java.io.OutputStream或java.io.Writer
 java.security.Principle
 HttpEntity<?>parameters
-java.util.Map/org.springframework.ui.Model
+java.util.Map/org.springframework.ui.Model(@ModelAttribute注解会把相应参数放到Ｍｏｄｅｌ中)
 org.springframework.ui.ModelMap
 org.springframework.web.servlet.mvc.support.RedirectAttribute
 org.springframework.validation.Errors
@@ -77,6 +79,7 @@ org.springframework.validation.BindingResult
 org.springframework.web.bind.support.SessionStatus
 org.springframework.web.util.UriComponentsBuilder
 @PathVariable、@MatrixVariable、@RequestParam、@RequestHeader、@RequestBody、@RequestPart
+....
 
 == 请求处理方法可以返回的类型对象
 ModelAndView、Model、包含模型的属性的Map、View、代表逻辑视图名的String、void、提供对Servlet的访问，以响应HTTP头部和内容HttpEntity或ResponseEntity对象、Callable、DeferredResult、其他任意类型，Spring将其视作输出给View的对象模型
