@@ -54,7 +54,7 @@ public class xxxController implements Controller{
 </bean>
 ....
 
-== 注解
+=== 注解
 @Controller
 <context:component-scan base-package="" />
 @RequestMapping(value="", method={,})
@@ -81,5 +81,7 @@ org.springframework.web.util.UriComponentsBuilder
 @PathVariable、@MatrixVariable、@RequestParam、@RequestHeader、@RequestBody、@RequestPart
 ....
 
-== 请求处理方法可以返回的类型对象
+=== 请求处理方法可以返回的类型对象
 ModelAndView、Model、包含模型的属性的Map、View、代表逻辑视图名的String、void、提供对Servlet的访问，以响应HTTP头部和内容HttpEntity或ResponseEntity对象、Callable、DeferredResult、其他任意类型，Spring将其视作输出给View的对象模型
+
+=== 转换器和格式化
