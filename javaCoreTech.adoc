@@ -1,0 +1,35 @@
+= java core tech
+:toc: right
+
+== Java的基本程序设计结构
+
+=== 注释
+=== 数据类型
+* 整形
+* 浮点类型
+* char类型
+* Unicode和char类型
+* boolean类型
+
+=== 变量
+static和final +
+枚举类型
+
+=== 字符串
+StringBuilder避免每次产生一个新的字符串
+
+=== 输入和输出
+* Scanner（控制台、文件）
+* PrintWriter
+* 格式化输出
+* 文件输入和输出，Paths、Path、Files、File
+
+=== 控制流程
+=== 大数值
+* BigInteger
+* BigDecimal
+
+=== 数组
+* 数组（Arrays工具类）
+
+== 对象和类
