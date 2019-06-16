@@ -129,3 +129,201 @@ StringBuilder避免每次产生一个新的字符串
 * 过滤器（Filter过滤想要显示的日志）
 * 格式化器（好像不支持）
 
+== 泛型程序设计
+* 泛型和强制类型转换
+
+=== 定义简单泛型类
+....
+public class Pair<T>{
+    private T first;
+    private T second;
+    public Pair(){}
+    pulic Pair(T first, T second){
+        this.first = first;
+        this.second = second;
+    }
+    ...
+}
+....
+=== 泛型方法
+....
+class ArrayAlg{
+    public static <T> T getMiddle(T ... a){
+    }
+}
+....
+=== 类型变量的限定
+* 可以限定，只有实现了某些接口的类型才能实例化此泛型类，如对元素比较，限制只有实现了Comparable接口的类才能实例化泛型类
++
+....
+class ArrayAlg{
+    public static <T extends Comparable> T minMax(T ... a){
+    }
+}
+....
+
+=== 泛型代码和虚拟机
+虚拟机无泛型类型对象，所有对象都属于普通类，所以需要：
+
+* 类型擦除
+* 翻译泛型表达式（存取域值时进行强制类型转换）
+* 翻译泛型方法
++
+....
+class DateInterval extends Pair<LocalDate>{
+    public void setSecond(LocalDate second){
+        if(second.compareTo(getFirst()) >= 0){
+            super.setSecond(second);
+        }
+    }
+    ...
+}
+....
+这个继承的问题是不能实现多态，要生产一个桥方法才行
+- 虚拟机中没有泛型，只有普通的类和方法
+- 所有的类型参数都用它们的限定类型替换
+- 桥方法被合成来保持多态
+- 为保持类型安全性，必要时插入强制类型转换
+
+* 调用遗留代码
+
+下面两种情况会发出警告，但只要了解在做什么，可以消除警告（@SuppressWarnings("unchecked")）
+
+- 泛型类对象作为参数传递给方法的非泛型参数
+- 方法的非泛型返回值赋给泛型类对象
+
+=== 约束与局限性
+* 不能用基本类型实例化类型参数，有Pair<Double>，无Pair<double>
+* 运行时类型查询只适用于原始类型
++
+....
+if(a instanceof Pair<String>)//Error
+if(a instanceof Pair<T>)//Error
+Pair<String> p = (Pair<String>)a;//warning
+....
+- getClass()总是返回原始类型
+* 不能创建参数化类型的数组
++
+....
+Pair<String>[] table = new Pair<String>[10] //Error
+Pair<String>[] table = (Pair<String>[])new Pair<?>[10] //Correct
+....
+* Varargs警告
++
+向参数个数可变的方法传递泛型类型的实例会触发警告，对方法增加注解@SuppressWarning("unchecked")或者@SafeVarargs就可以了
+* 不能实例化类型变量
++
+....
+public Pair(){first = new T(); second = new T();}   //Error
+....
+- 两种方法构造泛型对象
++
+Java SE 8中的方法
++
+....
+Pair<String> p = Pair.makePair(String::new);
+public static <T> Pair<T> makePair(Supplier<T> constr){
+    return new Pair<>(constr.get(), constr.get());
+}
+....
++
+传统的方法
++
+....
+Pair<String> p = Pair.makePair(String.class);
+public static <T> Pair<T> makePair(Class<T> cl){
+    try{
+        return new Pair<>(cl.newInstance(), cl.newInstance());
+    }catch(Exception ex){return null; }
+}
+....
+* 不能构造泛型数组
++
+....
+public static <T extends Comparable> T[] minmax(T[] a){ T[] mm = new T[2]; }    //Error,永远构造Comparable[2]
+....
++
+Java SE 8
++
+....
+String[] ss = ArrayAlg.minmax(String[]::new, "Tom", "Dick", "Harry");
+public static <T extends Comparable> T[] minmax(IntFunction<T[]> constr, T... a){
+    T[] mm = constr.apply(2);
+    ...
+}
+....
++
+老式的反射方法
++
+....
+public static <T extends Comparable> T[] minmax(T... a){
+    T[] mm = (T[])Array.newInstance(a.getClass().getComponentType(), 2);
+    ...
+}
+....
+* 泛型类的静态上下文中类型变量无效
++
+不能在泛型类的静态域或方法中引用类型变量
+* 不能抛出或铺货泛型类的实例
++
+不能抛出也不能捕获泛型类对象，
++
+....
+public class Problem<T> extends Exception{/*...*/}  //Error--can't extend Throwable
+public static <T extends Throwable> void doWork(T t) throws T{/*...*/}  //OK
+....
+* 可以消除对受查异常的检查
++
+Java异常处理的基本原则是，必须为所有的受查异常提供一个处理器
++
+以下代码可以消除这种限制
++
+....
+public abstract class Block{
+    public abstract void body() throws Exception;
+    public Thread toThread(){
+        return new Thread(){
+            public void run(){
+                try{
+                    body();
+                }catch(Throwable t){
+                    Block.<RuntimeException>throwAs(t);
+                }
+            }
+        };
+    }
+    @SuppressWarning("unchecked")
+    public static <T extends Throwable> void throwAs(Throwable e)throws T{
+        throw(T) e;
+    }
+}
+....
++
+运行如下程序，会抛出异常，但不需要捕获
++
+....
+public clas Test{
+    public static void main(String[] args){
+        new Block(){
+            public void body(){
+                Scanner in = new Scanner(new File("ququx"), "UTF-8");
+                while(in.hasNext()){
+                    System.out.println(in.next());
+                }
+            }
+        }.toThread().start();
+    }
+}
+....
+* 注意擦除后的冲突
++
+在继承的类型中，子类的方法类型擦除后和父类的方法签名一致，造成冲突，如equals()方法
++
+要想支持擦除的转换，就需要强行限制一个类或类型变量不能同时成为两个接口类型的子类，而这两个接口是同一接口的不同参数化
++
+....
+class Employee implements Comparable<Employee>{...}
+class Manager extends Employee implements Comparable<Manager>{...}  /Error
+....
+
+=== 泛型类型的继承规则
