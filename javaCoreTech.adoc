@@ -420,11 +420,23 @@ public interface Iterable<E>{
 +
 Java类库提供了一个类AbstractCollection
 * 集合框架中的接口
-[ditaa]
-----
-/-----------\
-|           |
-|   List    |
-|           |
-\-----------/
-----
+- Iterable<-Collection
++
+List、Set<-SortedSet<-NavigableSet<-TreeSet、Queue<-Deque
+- Map<-SortedMap<-NavigableMap<-TreeMap
+- Iterator<-ListIterator
+- RandomAccess
+
+=== 具体的集合
+* 链表
+- Java中，所有链表都是双向链接的
+- 集合类库提供了子接口ListIterator
++
+....
+interface ListIterator<E> extends Iterator<E>{
+    void add(E element);
+    E previous();
+    boolean hasPrevious();
+    ...
+}
+....
