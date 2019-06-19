@@ -327,3 +327,63 @@ class Manager extends Employee implements Comparable<Manager>{...}  /Error
 ....
 
 === 泛型类型的继承规则
+* 数组可以赋值
++
+....
+Manager[] managerBuddies = { ceo, cfo };
+Employee[] employeeBuddies = managerBuddies;
+....
+* 泛型类不可以这样
++
+....
+Pair<Manager> managerBuddies = new Pair<>( ceo, cfo );
+Pair<Employee> employeeBuddies = managerBuddies;    //illegal
+....
+* ArrayList<T>实现List<T>接口，因此，一个ArrayList<Manager>可以被转换为一个List<Manager>；一个ArrayList<Manager>不是一个ArrayList<Employee>或List<Employee>
+
+=== 通配符类型
+* 通配符概念
+- Pair<? extends Employss>，作为方法参数时，可以作为Pair<Employee>和Pair<Manager>的通用类型
+- 有限定的通配符，可以实现安全的访问器方法和不安全的更改器方法
+* 通配符的超类型限定
+- ? super Manager
+- 带有超类型限定的通配符可以向泛型对象写入，带有子类型限定的通配符可以从泛型对象读取
+- public static <T extends Comparable<? super T>> T min(T[] a)
+* 无限定通配符
+- Pair<?>，返回值只能赋给一个Object
++
+测试一个pair是否包含一个null引用
++
+....
+public static boolean hasNulls(Pair<?> p){
+    return p.getFirst() == null || p.getSecond() == null;
+}
+....
+* 通配符捕获
+- 交换成对元素的方法
++
+....
+public static <T> void swapHelper(Pair<T> p){
+    T t = p.getFirst();
+    p.setFirst(p.getSecond());
+    p.setSecond(T);
+}
+public static void swap(Pair<?> p){
+    swapHelper(p);
+}
+....
+
+=== 反射和泛型
+* 泛型Class类
++
+....
+T newInstance()
+T cast(Object obj)
+T[] getEnumConstants()
+Class<? super T> getSuperClass()
+Constructor<T> getConstructor(Class ... parameterTypes)
+Constructor<T> getDeclareConstructor(Class ... parameterTypes)
+....
+???????
+
+== 集合
