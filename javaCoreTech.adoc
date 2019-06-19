@@ -387,3 +387,44 @@ Constructor<T> getDeclareConstructor(Class ... parameterTypes)
 ???????
 
 == 集合
+=== Java集合框架
+* 将集合的接口与实现分离
+* Collection接口
++
+....
+public interface Collection<E>{
+    boolean add(E element);
+    Iterator<E> iterator();
+    ...
+}
+....
+* 迭代器
++
+....
+public interface Iterator<E>{
+    E next();
+    boolean hasNext();
+    void remove();
+    default void forEachRemaininng(Consumer<? super E> action);
+}
+....
+- for each循环可以与任何实现了Iterable接口的对象一起工作
++
+....
+public interface Iterable<E>{
+    Iterator<E> iterator();
+    ...
+}
+....
+* 泛型实用方法
++
+Java类库提供了一个类AbstractCollection
+* 集合框架中的接口
+[ditaa]
+----
+/-----------\
+|           |
+|   List    |
+|           |
+\-----------/
+----
