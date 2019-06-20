@@ -1,0 +1,16 @@
+== 部署nginx
+....
+//下载镜像
+docker pull nginx
+//运行
+docker run -p 8080:80 -d docker.io/nginx
+//停止服务
+docker ps
+docker stop CONTAINER ID
+//重启
+docker start CONTAINER ID
+//卸载
+docker ps
+docker stop CONTAINER ID
+docker rm CONTAINER ID
+....
