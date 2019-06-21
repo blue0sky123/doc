@@ -1,3 +1,62 @@
+== Getting Started
+=== Starting the Member and Client
+开启服务端member
+....
+Config cfg = new Config();
+HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
+Map<Integer, String> mapCustomers = instance.getMap("customers");
+mapCustomers.put(1, "Joe");
+mapCustomers.put(2, "Ali");
+mapCustomers.put(3, "Avi");
+
+System.out.println("Customer with key 1: "+ mapCustomers.get(1));
+System.out.println("Map Size:" + mapCustomers.size());
+
+Queue<String> queueCustomers = instance.getQueue("customers");
+queueCustomers.offer("Tom");
+queueCustomers.offer("Mary");
+queueCustomers.offer("Jane");
+System.out.println("First customer: " + queueCustomers.poll());
+System.out.println("Second customer: "+ queueCustomers.peek());
+System.out.println("Queue size: " + queueCustomers.size());
+....
+开启客户端
+....
+public class GettingStartedClient {
+    public static void main( String[] args ) {
+        ClientConfig clientConfig = new ClientConfig();
+        HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
+        IMap map = client.getMap( "customers" );
+        System.out.println( "Map Size:" + map.size() );
+    }
+}
+....
+
+== Understanding Configuration
+=== Configuration Declaratively
+* hazelcast.xml
+* hazelcast.yaml
+* hazelcast-full-example.xml
+* hazelcast-full-example.yaml
+* hazelcast-client-full-example.xml
+* hazelcast-client-full-example.yaml
+* hazelcast-client-failover-full-example.xml
+* hazelcast-client-failover-full-example.yaml
+
+=== Configuring Programmatically
+....
+Config config = new Config();
+config.getNetworkConfig().setPort( 5900 )
+        .setPortAutoIncrement( false );
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.setName( "testMap" )
+        .setBackupCount( 2 )
+        .setTimeToLiveSeconds( 300 );
+
+HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance( config );
+....
+
 can deploy a Hazelcast cluster in two ways: Embedded or Client/Server.
 
 内嵌式好处是低延时的访问
