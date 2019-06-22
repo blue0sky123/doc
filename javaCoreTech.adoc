@@ -440,3 +440,139 @@ interface ListIterator<E> extends Iterator<E>{
     ...
 }
 ....
+* 数组列表
+- ArrayList封装了一个动态再分配的对象数组
+* 散列集
+- HashSet
+* 树集
+- TreeSet是有序集合
+- 使用树集，元素必须实现Comparable接口或者在构造树集时必须提供一个Comparator
+- NavigableSet<Item> sortByDescription = new TreeSet<>(Comparator.comparing(Item::getDescription));
+* 队列与双端队列
+- Queue<E>：添加（add、offer）、删除（remove、poll）、获取（element、peek）元素的方法，分别返回异常和null
+- Deque<E>：同上，但换成首尾，即分别First和Last
+- ArrayDeque<E>
+* 优先级队列（PriorityQueue）
+- 使用堆（heap）的数据结构
+- 典型示例是任务调度
+
+=== 映射
+* 基本映射操作
+- 两个通用的实现：HashMap和TreeMap
+- get方法可以用getOrDefault方法替换，值不存在时返回默认值
+- put方法返回键对应的上一个值
+- Map.forEach(k, v)方法遍历
+* 更新映射项
+- 键不存在时，获得键值会返回null，对null值操作会返回异常，可以先用putIfAbsent和merge方法处理
+* 映射视图
+- Set<K> keySet()
+- Collection<V> values()
+- Set<Map.Entry<K, V>> entrySet()
+* 弱散列映射
++
+WeakHashMap
+* 链接散列集与映射
+- LinkedHashSet
+- LinkedHashMap
++
+用访问顺序而不是插入顺序对映射条目进行迭代 +
+可用于实现高速缓存的“最近最少使用”原则 +
++
+....
+Map<K, V> cache = new LinkedHashMap<>(128, 0.75F, true){
+    protected boolean removeEldestEntry(Map.Entry<K, V> eldest){
+        return size() > 100;
+    }
+}();
+....
+* 枚举集与映射
+- EnumSet是一个枚举类型元素集的实现
+....
+enum Weekday {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
+EnumSet<Weekday> always = EnumSet.allOf(Weekday.class)
+EnumSet<Weekday> never = EnumSet.noneOf(Weekday.class)
+EnumSet<Weekday> workday = EnumSet.range(Weekday.MONDAY, Weekday.FRIDAY)
+EnumSet<Weekday> mwf = EnumSet.range(Weekday.MONDAY, Weekday.WEDNSDAY, Weekday.FRIDAY)
+....
+- EnumMap是一个键类型为枚举类型的映射
++
+....
+EnumMap<Weekday, Employee> personInCharge = new EnumMap<>(Weekday.class)
+....
+* 标识散列映射
+- IdentityHashMap
+
+=== 视图与包装器
+*  轻量级集合包装器
++
+....
+List<Card> cardList（返回的视图对象） = Arrays.asList(cardDeck(数组))
+List<String> names = Arrays.asList("Amy", "Bob", "Carl");
+调用了
+Collections.nCopies(n, anObject);
+....
+* 子范围
++
+List的subList方法 +
+SortedSet的subSet、headSet、tailSet方法 +
+SortedMap的subMap、headMap、tailMap方法
+* 不可修改的视图
++
+....
+Collections.unmodifiableCollection
+Collections.unmodifiableList
+Collections.unmodifiableSet
+Collections.unmodifiableSortedSet
+Collections.unmodifiableNavigableSet
+Collections.unmodifiableMap
+Collections.unmodifiableSortedMap
+Collections.unmodifiableNavigableMap
+....
+* 同步视图
+- 可以线程安全的访问
++
+Map<String, Employee> map = Collections.synchronizedMap(new HashMap<String, Employee>());
+* 受查视图
+- 受查视图是用来对泛型类型发生问题时提供调试支持
++
+....
+ArrayList<String> strings = new ArrayList<>()
+List<String. safeStrings = Collections.checkedList(strings, String.class)
+ArrayList rawList = safeStrings;
+rawList.add(new Date()); //checked list throws a ClassCastException
+....
+
+=== 算法
+* 排序与混排
+- 主要是Collections的方法
+* 二分查找
++
+....
+Collections.binarySearch(...)
+....
+* 简单算法
+* 批操作
+- 对视图应用批操作
+* 集合与数组的转换
++
+....
+String[] values = ...;
+HashSet<String> staff = new HashSet<>(Arrays.asList(values));
+Object[] values = staff.toArray();
+String[] values = (String[])staff.toArray();    //Error
+String[] values = staff.toArray(new String[0]);
+....
+
+=== 遗留的集合
+* HashTable类
+- 方法是同步的
+* 枚举
+* 属性映射
+* 栈
+* 位集
+- 查找素数
+
+== 图形程序设计
+== 事件处理
+== Swing用户界面组件
+== 部署Java应用程序
