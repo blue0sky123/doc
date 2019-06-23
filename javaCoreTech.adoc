@@ -588,4 +588,115 @@ jar cvf JARFileName File1 File2
 - 每个JAR文件包含一个用于描述归档特征的清单文件（manifest）-MANIFEST.MF，位于META-INF子目录中
 - 使用jar命令创建、更新清单文件
 * 可执行JAR文件
-- jar cvfe MyProgram.jar com.mycompany.mypkg.MainAppClass files to add  //e选项
+- jar cvfe MyProgram.jar com.mycompany.mypkg.MainAppClass files to add  //e选项指定程序的入口点
+* 资源
++
+....
+URL url = ResourceTest.class.getResource("about.gif");
+Image img = new ImageIcon(url).getImage();
+
+InputStream stream = ResourceTest.class.getResourceAsStream("about.txt");
+Scanner in = new Scanner(stream, "UTF-8");
+....
+* 密封
++
+在清单文件中增加一节
++
+....
+Sealed: true/false
+....
+
+=== 应用首选项的存储
+* 属性映射
+- 实现属性映射的Java类名为Properties
++
+....
+InputStream inputStream = new BufferedInputStream(new FileInputStream("E:\\project\\java-core-tech\\src\\main\\resources\\a.properties"));
+Properties properties = new Properties();
+properties.load(inputStream);
+Iterator<String> iterator = properties.stringPropertyNames().iterator();
+while(iterator.hasNext()){
+    String key = iterator.next();
+    System.out.println(properties.getProperty(key));
+}
+inputStream.close();
+FileOutputStream fileOutputStream = new FileOutputStream("b.properties", true);
+properties.store(fileOutputStream, "Add new");
+fileOutputStream.close();
+....
+* 首选项API([red]#待完成#)
+
+=== 服务加载器
+* 提供一个接口
+* 实现接口中的方法
+* 把类名增加到META-INF/services目录下的一个UTF-8编码文件中，文件名必须与完全限定类名一致，用点号分隔
+* 调用
++
+....
+public static ServiceLoader<Cipher> cipherLoader = ServiceLoader.load(Cipher.class);
+....
++
+之后通过对cipherLoader使用iterator找到要使用的服务
+
+=== applet（[red]#待完成#）
+
+== 并发
+=== 什么是线程
+* 使用线程给其他任务提供机会
++
+....
+public interface Runnable{
+    void run();
+}
+Runnable r = () -> { task code };
+Thread t = new Thread();
+t.start();
+....
+
+=== 中断线程
++
+....
+public class App implements Runnable
+{
+    public static void main( String[] args )throws Exception {
+        Thread thread = new Thread(new App(), "first");
+        thread.start();Thread.sleep(1000);
+        thread.interrupt(); //1、中断标志置位；2、在线程阻塞时，抛出异常
+        System.out.println("main end");
+    }
+    @Override
+    public void run(){
+        while(true){
+            if(Thread.currentThread().isInterrupted()){ //检查中断位；静态方法interrupted会重置中断标志位false
+                System.out.println("Yes,I am interruted,but I am still running");
+                return;
+            }else{
+                System.out.println("not yet interrupted");
+            }
+        }
+    }
+}
+....
+
+=== 线程状态
+可调用getState()方法获得线程状态
+
+* 新创建线程（New）
+* 可运行线程（Runnable）
+* 被阻塞线程（Blocked）和等待线程（Waiting、Timed waiting）
+* 被终止的线程（Terminated）
+
+=== 线程属性
+* 线程优先级
+- void setPriority(int newPriority)
+- static int MIN_PRIORITY
+- static int NORM_PRIORITY
+- static int MAX_PRIORITY
+- static void yield()
+* 守护线程
+- void setDaemon(boolean isDaemon)
+* 未捕获异常处理器（？）
+- 异常被传递到一个用于未捕获异常的处理器
+- 该处理器属于一个实现Thread.UncaughtExceptionHandler接口的类，这个类只有一个方法，void uncaughtException(Thread t, Throwable e)
+- 可以用setUncaughtExceptionHandler或Thread的静态方法setDefaultUncaughtExceptionHandler为线程安装处理器
+- ThreadGroup（？）
