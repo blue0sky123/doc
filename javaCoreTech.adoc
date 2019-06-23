@@ -576,3 +576,16 @@ String[] values = staff.toArray(new String[0]);
 == 事件处理
 == Swing用户界面组件
 == 部署Java应用程序
+=== JAR文件
+* 创建JAR文件
++
+....
+jar options File1 File2
+eg:
+jar cvf JARFileName File1 File2
+....
+* 清单文件
+- 每个JAR文件包含一个用于描述归档特征的清单文件（manifest）-MANIFEST.MF，位于META-INF子目录中
+- 使用jar命令创建、更新清单文件
+* 可执行JAR文件
+- jar cvfe MyProgram.jar com.mycompany.mypkg.MainAppClass files to add  //e选项
