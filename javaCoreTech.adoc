@@ -801,3 +801,99 @@ public class Bank {
 }
 ....
 * 同步阻塞
+- 每一个java对象有一个锁
++
+....
+synchronized(obj){
+    critical section
+}
+....
+* 监视器概念
+- 监视器时只包含私有域的类
+- 每个监视器类的对象有一个相关的锁
+- 使用该所对所有的方法进行加锁
+- 该锁可以有任意多个相关条件
+- Java设计者以不是很精确的方式采用了监视器概念
+* Volatile域
+- volatile关键字为实例域的同步访问提供了一种免锁机制
+- 除非使用锁或volatile修饰符，否则无法从多个线程安全地读取一个域
+- 对共享变量除了赋值外无其他操作，可以将其声明为volatile
+* final变量
+- 域声明为final，多线程可以安全地访问
+* 原子性
+- java.util.concurrent.atomic的学习
+* 死锁
+* 线程局部变量
+- 使用ThreadLocal辅助类为各个线程提供各自的实例
+- 会调用混乱示例
++
+....
+public static final SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
+String dateStamp = dateFormat.format(new Date());
+....
+- 正确的调用
++
+....
+public static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(()->new SimpleDateFormat("yyyy-MM-dd"));
+String dateStamp = dateFormat.get().format(new Date());
+....
+- java.util.Random随机数生成
++
+....
+int random = ThreadLocalRandom.current().netInt(upperBound);
+....
+* 锁测试与超时
+- 谨慎的获取锁，可以立即返回，可以超时返回，可以被中断
++
+....
+if(mylock.tryLock(1000, TimeUnit.MILISECONDS)){
+    ....
+}else{
+    ....
+}
+....
+* 读写锁
++
+....
+private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+//获取毒读锁和写锁
+private Lock readLock = rwl.readLock();
+private Lock writeLock = rwl.writeLock();
+//对获取方法加读锁
+public double getTotalBalance(){
+    readLock.lock();
+    try{...}
+    finally{ readLock.unlock(); }
+}
+//对所有修改方法加写锁
+public void transfer(...){
+    writeLock.lock();
+    try{...}
+    finally{ writeLock.unlock(); }
+}
+....
+* 为什么弃用stop和suspend方法
+
+=== 阻塞队列
+* 阻塞队列方法
+- add、remove、element方法操作会返回异常
+- offer、poll、peek不会返回异常
+* java.util.concurrent中的阻塞队列
+- LinkedBlockingQueue
+- ArrayBlockingQueue
+- PriorityBlockingQueue
+- DelayQueue包含实现Delayed接口的对象
++
+....
+interface Delayed extends Comparable<Delayed>{
+    long getDelay(TimeUnit unit);
+}
+....
+- LinkedTransferQueue实现了TransferQueue，允许生产者线程等待
+
+=== 线程安全的集合（[red]#未完成#）
+* 高效的映射、集和队列
+- java.util.concurrent包提供了映射、有序集和队列的高效实现：ConcurrentHashMap、ConcurrentSkipListMap、ConcurrentSkipListSet和ConcurrentLinkedQueue
+* 映射条目的原子更新
+
+=== Callable与Future
