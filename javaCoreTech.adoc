@@ -640,7 +640,7 @@ public static ServiceLoader<Cipher> cipherLoader = ServiceLoader.load(Cipher.cla
 
 === applet（[red]#待完成#）
 
-== 并发
+== 并发（[red]#需要看第二遍#）
 === 什么是线程
 * 使用线程给其他任务提供机会
 +
@@ -1020,3 +1020,14 @@ public static void main( String[] args ){
         }
     }
 ....
+* 可完成Future
+- 使用事件处理器处理嵌套的非阻塞调用
+
+=== 同步器
+* 信号量
+* 倒计时门栓
+* 障栅
+* 交换器
+* 同步队列
+
+=== 线程与Swing
