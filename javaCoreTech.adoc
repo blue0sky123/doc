@@ -897,3 +897,126 @@ interface Delayed extends Comparable<Delayed>{
 * 映射条目的原子更新
 
 === Callable与Future
+- Callable
++
+....
+public interface Callable<V>{
+    V call() throws Exception;
+}
+....
+- Future
++
+....
+public interface Future<V>{
+    V get() throws ...;
+    V get(long timeout, TimeUnit unit) throws ...;
+    void cancel(boolean mayInterrupt);
+    boolean isCancelled();
+    boolean isDone();
+}
+....
+- FutureTask包装器
++
+....
+Callable<Integer> myComputation = ...;
+FutureTask<Integer> task = new FutureTask<Integer>(myComputation);
+Thread t = new Thread(task); //it's a Runnable
+t.start();
+...
+Integer result = task.get();    //it's a Futue
+....
+
+=== 执行器
+
+执行器（Executor）类有许多静态工厂方法用来构建线程池
+
+* 线程池
+- 这3个方法返回实现了ExecutorService接口的ThreadPoolExecutor类的对象
++
+....
+newCachedThreadPool
+newFixedThreadPool
+newSingleThreadExecutor
+....
+- 下述方法将一个Runnable对象或Callable对象提交给ExecutorService
++
+....
+Future<?> submit(Runnable  task);
+Future<T> submit(Runnable task, T result);
+Future<T> submit(Callable<T> task);
+....
+* 预定执行（Scheduled Execution）
+- 下述方法返回实现了ScheduledExecutorService接口的对象
++
+....
+newScheduledThreadPool
+newSingleThreadScheduledExecutor
+....
+* 控制任务组
+- invokeAny方法提交所有对象到一个Callable对象的集合中，并返回某个已经完成了的任务的结果
+- invokeAll方法提交所有对象到一个Callable对象的集合中，并返回一个Future对象的列表，代表所有任务的解决方案
++
+....
+List<Callable<T>> tasks = ...;
+List<Future<T>> results = executor.invokeAll(tasks);
+for(Future<T> result : results){
+    processFurther(result.get());
+}
+....
+- ExecutorCompletionService
++
+....
+ExecutorCompletionService<T> service = new ExecutorCompletionService(executor);
+for(Callable<T> task : tasks){
+    service.submit(task);
+}
+for(int i=0; i<tasks.size(); i++){
+    processFurther(service.take().get());
+}
+....
+* Fork-Join框架
+- 可分别计算的子任务
++
+....
+public static void main( String[] args ){
+        final int SIZE = 10000000;
+        double[] numbers = new double[SIZE];
+        for(int i=0; i<SIZE; i++){
+            numbers[i] = Math.random();
+        }
+
+    }
+    class Counter extends RecursiveTask<Integer>{
+        public static final int THRESHOLD = 1000;
+        private double[] values;
+        private int from;
+        private int to;
+        private DoublePredicate filter;
+
+        public Counter(double[] values, int from, int to, DoublePredicate filter){
+            this.values = values;
+            this.from = from;
+            this.to = to;
+            this.filter = filter;
+        }
+
+        @Override
+        protected Integer compute() {
+            if(to-from<THRESHOLD){
+                int count = 0;
+                for(int i=from; i<to; i++){
+                    if(filter.test(values[i])){
+                        count++;
+                    }
+                }
+                return count;
+            }else{
+                int mid = (from+to)/2;
+                Counter first = new Counter(values, from, mid, filter);
+                Counter second = new Counter(values, mid, to, filter);
+                invoke(first, second);
+                return first.join()+second.join();
+            }
+        }
+    }
+....
