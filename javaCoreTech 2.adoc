@@ -2,3 +2,147 @@
 :toc: left
 
 == Java SE 8的流库
+=== 从迭代到流的操作
+* 流遵循了“做什么而非怎么做”的原则
++
+....
+public static void main( String[] args )throws IOException {
+        List<String> words = new ArrayList<>();
+        words.add("hello");
+        words.add("word");
+        long count = 0;
+        for(String w : words){
+            if(w.length()>12){
+                count ++;
+            }
+        }
+        count = words.stream().filter(w->w.length()>12).count();
+
+        count = words.parallelStream().filter(w->w.length()>12).count();
+    }
+....
+
+=== 流的创建
+* 各种方法创建
++
+....
+public static <T> void show(String title, Stream<T> stream){
+        final int SIZE = 10;
+        List<T> firstElements = stream.limit(SIZE+1).collect(Collectors.toList());
+        System.out.println(title + ":");
+        for (int i = 0; i < firstElements.size(); i++) {
+            if(i>0) System.out.println(", ");
+            if(i<SIZE) System.out.println(firstElements.get(i));
+            else System.out.println("...");
+        }
+        System.out.println();
+    }
+    public static void main( String[] args )throws IOException {
+        Path path = Paths.get("../gutenberg/alice30.txt");
+        String contents = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        //用静态的Stream.of方法把数组转换为流
+        Stream<String> words = Stream.of(contents.split("\\PL+"));
+        show("words", words);
+        Stream<String> song = Stream.of("gently", "down", "the", "stream");
+        show("song", song);
+        //不包含任何元素的流
+        Stream<String> silence = Stream.empty();
+        show("silence", silence);
+        Stream<String> echos = Stream.generate(()->"Echo");
+        show("echos", echos);
+        Stream<Double> randoms = Stream.generate(Math::random);
+        show("randoms", randoms);
+        Stream<BigInteger> integers = Stream.iterate(BigInteger.ONE, n->n.add(BigInteger.ONE));
+        show("integers", integers);
+        Stream<String> wordsAnotherWay = Pattern.compile("\\PL+").splitAsStream(contents);
+        show("wordsAnotherWay", wordsAnotherWay);
+        try(Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)){
+            show("lines", lines);
+        }
+    }
+....
+
+* Array.stream(array, from, to)可以从数组中位于from（包括）和to（不包括）的元素中创建一个流
+
+=== filter、map和flatMap方法
+* filter转换会产生一个流，它的元素与某种条件相匹配
++
+....
+List<String> wordList = ...;
+Stream<String> longWords = wordList.stream().filter(w->w.length()>12);
+....
+* map方法按照某种方式来转换流中的值
++
+....
+Stream<String> lowercaseWords = words.stream().map(String::toLowerCase);
+Stream<String> firstLetters = words.stream().map(s->s.substring(0, 1));
+....
+* 使用flatMap方法摊平流
++
+....
+public static Stream<String> letters(String s){
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < s.length(); i++) {
+            result.add(s.substring(i,i+1));
+        }
+        return result;
+    }
+    public static void main( String[] args )throws IOException {
+        List<String> words = new ArrayList<>();
+        words.add("hello");
+        words.add("word");
+        Stream<Stream<String>> result = words.stream().map(w->letters(w));
+        Stream<String> flatResult = words.stream().flatMap(w->letters(w));
+    }
+....
+
+=== 抽取子流和连接流
+* 裁剪无限流
+....
+Stream<String> randoms = Stream.generate(Math::random).limit(100);
+....
+* 跳过
+....
+Stream<String> words = Stream.of(contents.split("\\PL+")).skip(1);
+....
+* 连接流
+....
+Stream<String> combined = Stream.concat(letters("Hello"), letters("World"));
+....
+
+=== 其他的流转换
+....
+Stream<String> uniqueWords = Stream.of("merrily", "merrily", "merrily", "gently").distinct();
+Stream<String> longestFirst = words.stream().sorted(Comparator.comparing(String::length).reversed());
+Object[] powers = Stream.iterate(1.0, p->p*2).peek(e->System.out.println("Fetching "+e)).limit(20).toArray();
+....
+
+=== 简单约简
+....
+Optional<String> largest = words.max(String::compareToIgnoreCase);
+System.out.println("largest: " + largest.orElse(""));
+
+Optional<String> startWithQ = words.filter(s->s.startsWith("Q")).findFirst();
+
+Optional<String> starsWithQ = words.parallel().filter(s->s.startsWith("Q")).findAny();
+
+boolean aWordStartsWithQ = words.parallel().anyMatch(s->s.startsWith("Q"));
+....
+
+=== Optional类型
+==== 如何使用Optional值
+
+
+=== 收集结果
+
+=== 收集到映射表中
+
+=== 群组和分区
+
+=== 下游收集器
+
+=== 约简操作
+
+=== 基本类型流
+
+=== 并行流
