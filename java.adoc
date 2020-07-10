@@ -1,10 +1,27 @@
-java执行jar文件方法：
 
-java -jar xxx.jar会返回no main manifest attribute, in hazelcast-test-1.0-SNAPSHOT.jar
+* java编译执行引用单独的jar包
+- 编译
++
+....
+javac -cp D:\yy\yy.jar,D\xx\xx.jar test.java
+....
+- 执行
++
+....
+java -cp D:\yy\yy.jar,D\xx\xx.jar test
+....
 
-解决方法： +
-
-* java -cp xxx.jar 类的路径
+* java编译执行引用文件夹里面的jar包
+- 编译
++
+....
+javac -Djava.ext.dirs=D:\lib test.java
+....
+- 执行
++
+....
+java  -Djava.ext.dirs=D:\lib test
+....
 
 * 引入插件
 +
@@ -30,21 +47,4 @@ java -jar xxx.jar会返回no main manifest attribute, in hazelcast-test-1.0-SNAP
   </executions>
  </plugin>
 ....
-
-java执行jar缺少依赖jar包
-
-java -cp hazelcast-test-1.0-SNAPSHOT.jar hazelcast.GettingStarted会返回 
-....
-Exception in thread "main" java.lang.NoClassDefFoundError: com/hazelcast/config/Config
-        at hazelcast.GettingStarted.main(GettingStarted.java:12)
-Caused by: java.lang.ClassNotFoundException: com.hazelcast.config.Config
-        at java.net.URLClassLoader.findClass(Unknown Source)
-        at java.lang.ClassLoader.loadClass(Unknown Source)
-        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
-        at java.lang.ClassLoader.loadClass(Unknown Source)
-....
-解决方法：
-
-* 可以把引入的第三方jar放在xxx\jre1.8.0_191\lib\ext目录下，即可执行成功 +
-* java -cp hazelcast-test-1.0-SNAPSHOT.jar -Djava.ext.dirs=依赖的第三方jar包所在位置 hazelcast.GettingStarted
 

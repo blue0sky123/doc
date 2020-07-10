@@ -1,5 +1,23 @@
 == Getting Started
 === Starting the Member and Client
+
+java执行jar缺少依赖jar包
+
+java -cp hazelcast-test-1.0-SNAPSHOT.jar hazelcast.GettingStarted会返回
+....
+Exception in thread "main" java.lang.NoClassDefFoundError: com/hazelcast/config/Config
+        at hazelcast.GettingStarted.main(GettingStarted.java:12)
+Caused by: java.lang.ClassNotFoundException: com.hazelcast.config.Config
+        at java.net.URLClassLoader.findClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+....
+解决方法：
+
+* 可以把引入的第三方jar放在xxx\jre1.8.0_191\lib\ext目录下，即可执行成功 +
+* java -cp hazelcast-test-1.0-SNAPSHOT.jar -Djava.ext.dirs=依赖的第三方jar包所在位置 hazelcast.GettingStarted
+
 开启服务端member
 ....
 Config cfg = new Config();
