@@ -53,3 +53,4 @@ firewall-cmd --reload或firewall-cmd --complete-reload(两者的区别就是第�
 firewall-cmd --zone=public --list-ports
 18.在指定区域打开端口（记得重启防火墙）
 firewall-cmd --zone=public --add-port=80/tcp(永久生效再加上 --permanent)
+设置开机启动：systemctl enable mysqld;systemctl daemon-reload
